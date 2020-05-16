@@ -1,9 +1,9 @@
-import serial
-import json
-import threading
+import configparser
 import subprocess
+import json
 import sqlite3 as lite
 from datetime import datetime
+from os.path import abspath
 
 
 def initDB(databaseName):
@@ -16,7 +16,7 @@ def initDB(databaseName):
     #print(c.fetchone()[0])
     #if the count is 1, then table exists
     if c.fetchone()[0] == 1 :
-        print('dobby-pi-base: tables exist')
+        print('dobby-pi-base:tables exist')
         None
     
     else :
@@ -74,6 +74,8 @@ def speedTest(databaseName):
         'No'))
 
 if __name__ == "__main__":
-#todo move file path to configuration
-    databaseName="test.db"
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    databaseName=config.get('default','databasePathAndName')
+    initDB(databaseName)
     speedTest(databaseName)
