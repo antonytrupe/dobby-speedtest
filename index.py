@@ -3,7 +3,6 @@ import subprocess
 import json
 import sqlite3 as lite
 from datetime import datetime
-from os.path import abspath
 
 
 def initDB(databaseName):
@@ -17,8 +16,6 @@ def initDB(databaseName):
     #if the count is 1, then table exists
     if c.fetchone()[0] == 1 :
         print('dobby-pi-base:tables exist')
-        None
-    
     else :
         print('dobby-pi-base: missing 1 or more tables, creating...')
         
@@ -39,39 +36,32 @@ def initDB(databaseName):
             `is speedtest vpn`  TEXT DEFAULT 'No');''')
             
 def speedTest(databaseName):
-    print('dobby-pi-base:starting speedtest...')
+    con = lite.connect(databaseName)
+    
+    print('dobby-speedtest:starting speedtest...')
     response = subprocess.Popen('/usr/local/bin/speedtest-cli --json --server 29204', shell=True, stdout=subprocess.PIPE).stdout.read().decode('utf-8')
-    print(response)
+    print('dobby-speedtest:'+response)
     data=json.loads(response.rstrip().replace("'","\""))
-    print('{},{},{},{},{},{},{},{},{},{},{},{},{},{}'.format(
-        #Date
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        #ConnType
-        'Wi-Fi',
-        #ConnDetails
-        'SSID: Trupe_House',
-        #Lat
-        data["client"]["lat"],
-        #Lon
-        data["client"]["lon"],
-        #Download
-        data['download'],
-        #DownloadBytes
-        '',
-        #Upload
-        data['upload'],
-        #UploadBytes
-        '',
-        #Latency
-        data['server']['latency'],
-        #ServerName
-        data['server']['name'],
-        #InternalIp
-        '',
-        #ExternalIp
-        data['client']['ip'],
-        #Is SpeedTest VPN
-        'No'))
+    with con:
+
+        cur = con.cursor()
+        #print('about to insert')
+        cur.execute(''' insert into speedtest (date,conntype,conndetails,lat,lon,download,downloadbytes,upload,uploadbytes,latency, servername,internalip,externalip,"is speedtest vpn") 
+                    values (:date,:conntype,:conndetails,:lat,:lon,:download,:downloadbytes,:upload,:uploadbytes,:latency, :servername,:internalip,:externalip,:vpn) ''',
+                    {"date":datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                     "conntype":'Wi-Fi',
+                     "conndetails":'SSID: Trupe_House',
+                     "lat":data["client"]["lat"],
+                     "lon":data["client"]["lon"],
+                     "download":data['download'],
+                     "downloadbytes":None,
+                     "upload":data['upload'],
+                     "uploadbytes":None,
+                     "latency":data['server']['latency'],
+                     "servername":data['server']['name'],
+                     "internalip":data['client']['ip'],
+                     "externalip":None,
+                     "vpn":'No'})
 
 if __name__ == "__main__":
     config = configparser.ConfigParser()
