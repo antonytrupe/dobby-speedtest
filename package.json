@@ -1,0 +1,19 @@
+{
+  "name": "dobby-speedtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antonytrupe/dobby-speedtest.git"
+  },
+  "author": "Antony Trupe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antonytrupe/dobby-speedtest/issues"
+  },
+  "homepage": "https://github.com/antonytrupe/dobby-speedtest#readme"
+}
