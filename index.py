@@ -15,9 +15,9 @@ def initDB(databaseName):
     #print(c.fetchone()[0])
     #if the count is 1, then table exists
     if c.fetchone()[0] == 1 :
-        print('dobby-pi-base:tables exist')
+        print('dobby-speedtest:tables exist')
     else :
-        print('dobby-pi-base: missing 1 or more tables, creating...')
+        print('dobby-speedtest: missing 1 or more tables, creating...')
         
         c.execute('''CREATE TABLE if not exists `speedtest` (
             `date`  TEXT,
